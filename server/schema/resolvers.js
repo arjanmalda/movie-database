@@ -1,4 +1,4 @@
-const { Movies, MovieList } = require("../FakeData");
+const { Movies, Actors } = require("../FakeData");
 const _ = require("lodash");
 
 const resolvers = {
@@ -11,6 +11,14 @@ const resolvers = {
       const movie = _.find(Movies, { id: Number(id) });
       return movie;
     },
+    actors: () => {
+      return Actors;
+    },
+    actor: (parent, args) => {
+      const id = args.id;
+      const actor = _.find(Actors, { id: Number(id) });
+      return actor;
+    },
   },
 
   Mutation: {
@@ -20,6 +28,13 @@ const resolvers = {
       movie.id = lastId + 1;
       Movies.push(movie);
       return movie;
+    },
+    addActor: (parent, args) => {
+      const actor = args.input;
+      const lastId = Actors[Actors.length - 1].id;
+      actor.id = lastId + 1;
+      Actors.push(actor);
+      return actor;
     },
   },
 };

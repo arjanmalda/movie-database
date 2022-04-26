@@ -16,4 +16,22 @@ const Movies = [
   },
 ];
 
-module.exports = { Movies };
+const Actors = [
+  {
+    id: 1,
+    actor: "Robert Pattinson",
+    nationality: "British",
+  },
+  {
+    id: 2,
+    actor: "Leonardo DiCaprio",
+    nationality: "American",
+  },
+  {
+    id: 3,
+    actor: "Tom Hanks",
+    nationality: "American",
+  },
+];
+
+module.exports = { Movies, Actors };

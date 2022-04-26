@@ -20,6 +20,26 @@ const typeDefs = gql`
   type Mutation {
     addMovie(input: AddMovieInput!): Movie
   }
+
+  type Actor {
+    id: ID!
+    actor: String!
+    nationality: String!
+  }
+
+  type Query {
+    actors: [Actor!]!
+    actor(id: ID!): Actor!
+  }
+
+  input AddActorInput {
+    actor: String!
+    nationality: String!
+  }
+
+  type Mutation {
+    addActor(input: AddActorInput!): Actor
+  }
 `;
 
 module.exports = { typeDefs };

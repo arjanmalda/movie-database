@@ -1,6 +1,6 @@
 import "./App.css";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
-import DisplayData from "./DisplayMovies";
+import DisplayData from "./DisplayData";
 
 function App() {
   const client = new ApolloClient({
