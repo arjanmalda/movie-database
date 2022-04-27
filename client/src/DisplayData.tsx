@@ -242,7 +242,12 @@ function DisplayData() {
                 <h3>Duration: {movie.duration}</h3>
                 <h2>Actors:</h2>
                 {movie.actors.map((actor) => {
-                  return <h3 key={actor.id}>{actor.actor}</h3>;
+                  return (
+                    <div key={actor.id}>
+                      <h3>Main actor: {actor.actor}</h3>
+                      <h3>Nationality: {actor.nationality}</h3>
+                    </div>
+                  );
                 })}
               </>
             </div>
