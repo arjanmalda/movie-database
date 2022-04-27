@@ -1,24 +1,18 @@
 const { gql } = require("apollo-server");
 
 const typeDefs = gql`
+  type Query {
+    movies: [Movie!]!
+    movie(id: ID!): Movie!
+    actors: [Actor!]!
+    actor(actor: String): Actor!
+  }
+
   type Movie {
     id: ID!
     movie: String!
     duration: String!
-  }
-
-  type Query {
-    movies: [Movie!]!
-    movie(id: ID!): Movie!
-  }
-
-  input AddMovieInput {
-    movie: String!
-    duration: String!
-  }
-
-  type Mutation {
-    addMovie(input: AddMovieInput!): Movie
+    actors: [Actor]!
   }
 
   type Actor {
@@ -27,18 +21,27 @@ const typeDefs = gql`
     nationality: String!
   }
 
-  type Query {
-    actors: [Actor!]!
-    actor(id: ID!): Actor!
+  type Mutation {
+    addMovie(movieInput: AddMovieInput!): Movie
+    addActor(input: AddActorInput!): Actor
+    linkActor(input: LinkActorInput!): Actor
+  }
+
+  input AddMovieInput {
+    id: ID!
+    movie: String!
+    duration: String!
+  }
+
+  input LinkActorInput {
+    id: ID!
+    actor: String!
+    nationality: String!
   }
 
   input AddActorInput {
     actor: String!
     nationality: String!
-  }
-
-  type Mutation {
-    addActor(input: AddActorInput!): Actor
   }
 `;
 

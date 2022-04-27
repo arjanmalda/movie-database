@@ -5,6 +5,7 @@ interface Movie {
   id: string | undefined;
   movie: string | undefined;
   duration: string | undefined;
+  actors: { id: string; actor: string; nationality: string }[];
 }
 
 interface Actor {
@@ -19,6 +20,11 @@ const QUERY_ALL_MOVIES = gql`
       id
       movie
       duration
+      actors {
+        id
+        actor
+        nationality
+      }
     }
   }
 `;
@@ -33,9 +39,19 @@ const QUERY_ALL_ACTORS = gql`
   }
 `;
 
+const GET_ACTOR_BY_NAME = gql`
+  query Actor($actor: String!) {
+    actor(actor: $actor) {
+      id
+      actor
+      nationality
+    }
+  }
+`;
+
 const ADD_MOVIE_MUTATION = gql`
   mutation AddMovie($input: AddMovieInput!) {
-    addMovie(input: $input) {
+    addMovie(movieInput: $movieInput) {
       movie
       duration
     }
@@ -51,11 +67,24 @@ const ADD_ACTOR_MUTATION = gql`
   }
 `;
 
+const ATTACH_ACTOR_MUTATION = gql`
+  mutation LinkActor($input: LinkActorInput!) {
+    linkActor(input: $input) {
+      id
+      actor
+      nationality
+    }
+  }
+`;
+
 function DisplayData() {
   const [movieName, setMovieName] = useState("");
   const [duration, setDuration] = useState("");
-  const [actorName, setActor] = useState("");
+  const [actorName, setActorName] = useState("");
   const [nationality, setNationality] = useState("");
+  const [linkedActors, setLinkedActors] = useState<
+    Array<{ id: 1; actor: string; nationality: string }>
+  >([]);
 
   const {
     data: movieData,
@@ -70,8 +99,14 @@ function DisplayData() {
     refetch: actorsRefetch,
   } = useQuery(QUERY_ALL_ACTORS);
 
+  const [
+    fetchActor,
+    { data: individualActorData, error: individualActorError },
+  ] = useLazyQuery(GET_ACTOR_BY_NAME);
+
   const [addMovie] = useMutation(ADD_MOVIE_MUTATION);
   const [addActor] = useMutation(ADD_ACTOR_MUTATION);
+  const [linkActor] = useMutation(ATTACH_ACTOR_MUTATION);
 
   if (moviesLoading) {
     return <h1>MOVIES ARE LOADING...</h1>;
@@ -82,7 +117,7 @@ function DisplayData() {
       <>
         <h1>Movies could not be loaded...</h1>
         <h3>
-          <a href="http://http://localhost:3000">Try again</a>
+          <a href="http://localhost:3000">Try again</a>
         </h3>
       </>
     );
@@ -97,7 +132,7 @@ function DisplayData() {
       <>
         <h1>Actors could not be loaded...</h1>
         <h3>
-          <a href="http://http://localhost:3000">Try again</a>
+          <a href="http://localhost:3000">Try again</a>
         </h3>
       </>
     );
@@ -120,11 +155,60 @@ function DisplayData() {
             setDuration(event.target.value);
           }}
         />
+        <select
+          placeholder="Actor name..."
+          onChange={(event) => {
+            setActorName(event.target.value);
+            setLinkedActors(individualActorData);
+            console.log(actorName);
+          }}
+        >
+          {actorData &&
+            actorData.actors.map((actor: Actor) => {
+              return <option key={actor.id}>{actor.actor}</option>;
+            })}
+        </select>
+        <button
+          onClick={() => {
+            addMovie({
+              variables: {
+                input: {
+                  id: movieData.movies.length + 1,
+                  movie: movieName,
+                  duration: duration,
+                },
+              },
+            });
+
+            moviesRefetch();
+            actorsRefetch();
+          }}
+        >
+          Add Movie
+        </button>
+        <button
+          onClick={() => {
+            linkActor({
+              variables: {
+                input: {
+                  id: movieData.movies.length,
+                  actor: "1",
+                  nationality: "1",
+                },
+              },
+            });
+            moviesRefetch();
+          }}
+        >
+          Link actor
+        </button>
+      </div>
+      <div>
         <input
           type="text"
           placeholder="Actor name..."
           onChange={(event) => {
-            setActor(event.target.value);
+            setActorName(event.target.value);
           }}
         />
         <input
@@ -134,14 +218,8 @@ function DisplayData() {
             setNationality(event.target.value);
           }}
         />
-
         <button
           onClick={() => {
-            addMovie({
-              variables: {
-                input: { movie: movieName, duration: duration },
-              },
-            });
             addActor({
               variables: {
                 input: { actor: actorName, nationality: nationality },
@@ -152,28 +230,25 @@ function DisplayData() {
             actorsRefetch();
           }}
         >
-          Add
+          Create new actor
         </button>
       </div>
       {movieData &&
         movieData.movies.map((movie: Movie) => {
           return (
             <div key={movie.id}>
-              <h1>Movie: {movie.movie}</h1>
-              <h3>Duration: {movie.duration}</h3>
+              <>
+                <h1>Movie: {movie.movie}</h1>
+                <h3>Duration: {movie.duration}</h3>
+                <h2>Actors:</h2>
+                {movie.actors.map((actor) => {
+                  return <h3 key={actor.id}>{actor.actor}</h3>;
+                })}
+              </>
             </div>
           );
         })}
       ---------------------------------------------------------------------------------------------
-      {actorData &&
-        actorData.actors.map((actor: Actor) => {
-          return (
-            <div key={actor.id}>
-              <h1>Actor: {actor.actor}</h1>
-              <h3>Nationality: {actor.nationality}</h3>
-            </div>
-          );
-        })}
     </div>
   );
 }

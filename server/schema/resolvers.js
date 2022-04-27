@@ -15,20 +15,28 @@ const resolvers = {
       return Actors;
     },
     actor: (parent, args) => {
-      const id = args.id;
-      const actor = _.find(Actors, { id: Number(id) });
-      return actor;
+      const actor = args.actor;
+      const actors = _.find(Actors, { actor: String(actor) });
+      return actors;
     },
   },
 
   Mutation: {
     addMovie: (parent, args) => {
       const movie = args.input;
-      const lastId = Movies[Movies.length - 1].id;
+      // const lastId = Movies[Movies.length - 1].id;
       movie.id = lastId + 1;
       Movies.push(movie);
       return movie;
     },
+
+    linkActor: (parent, args) => {
+      const actor = args.input;
+
+      Movies[Movies.length - 1].actors.push(actor);
+      return actor;
+    },
+
     addActor: (parent, args) => {
       const actor = args.input;
       const lastId = Actors[Actors.length - 1].id;
