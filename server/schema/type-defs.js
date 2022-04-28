@@ -27,6 +27,7 @@ const typeDefs = gql`
     addMovie(movieInput: AddMovieInput!): Movie
     addActor(input: AddActorInput!): Actor
     linkActor(input: LinkActorInput!): Actor
+    deleteMovie(id: String!): String
   }
 
   input AddMovieInput {
@@ -39,6 +40,7 @@ const typeDefs = gql`
     id: ID!
     actor: String!
     nationality: String!
+    image: String!
   }
 
   input AddActorInput {

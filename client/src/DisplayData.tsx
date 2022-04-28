@@ -2,13 +2,16 @@ import React, { useState } from "react";
 import { useQuery, useLazyQuery, gql, useMutation } from "@apollo/client";
 
 import Button from "@mui/material/Button";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import {
   MenuItem,
   Select,
   FormControl,
   TextField,
   Rating,
+  IconButton,
 } from "@mui/material";
+import { CloseRounded } from "@mui/icons-material";
 
 interface Movie {
   id: string | undefined;
@@ -83,13 +86,19 @@ const ADD_ACTOR_MUTATION = gql`
   }
 `;
 
-const ATTACH_ACTOR_MUTATION = gql`
+const LINK_ACTOR_MUTATION = gql`
   mutation LinkActor($input: LinkActorInput!) {
     linkActor(input: $input) {
       id
       actor
       nationality
     }
+  }
+`;
+
+const DELETE_MOVIE_MUTATION = gql`
+  mutation DeleteMovie($deleteMovieId: String!) {
+    deleteMovie(id: $deleteMovieId)
   }
 `;
 
@@ -125,7 +134,8 @@ const DisplayData = () => {
 
   const [addMovie] = useMutation(ADD_MOVIE_MUTATION);
   const [addActor] = useMutation(ADD_ACTOR_MUTATION);
-  const [linkActor] = useMutation(ATTACH_ACTOR_MUTATION);
+  const [linkActor] = useMutation(LINK_ACTOR_MUTATION);
+  const [deleteMovie] = useMutation(DELETE_MOVIE_MUTATION);
 
   if (moviesLoading) {
     return <h1>MOVIES ARE LOADING...</h1>;
@@ -193,9 +203,10 @@ const DisplayData = () => {
                 setMovieImage(event.target.value);
               }}
             />
-
+            <br></br>
             <Select
               defaultValue={"Actor"}
+              variant="filled"
               inputProps={{
                 name: "select actor",
                 id: "uncontrolled-native",
@@ -210,13 +221,14 @@ const DisplayData = () => {
               {actorData &&
                 actorData.actors.map((actor: Actor) => {
                   return (
-                    <MenuItem key={actor.id} value={10}>
+                    <MenuItem key={actor.id} value={actor.actor}>
                       {actor.actor}
                     </MenuItem>
                   );
                 })}
             </Select>
-            <div className="button-container">
+            <br></br>
+            <div className="button-container-movie">
               <Button
                 variant="outlined"
                 size="small"
@@ -238,7 +250,7 @@ const DisplayData = () => {
               >
                 Add Movie
               </Button>
-
+              <div className="button-space"></div>
               <Button
                 variant="outlined"
                 size="small"
@@ -290,8 +302,10 @@ const DisplayData = () => {
                 setActorImage(event.target.value);
               }}
             />
+            <br></br>
+            <br></br>
 
-            <div className="button-container">
+            <div className="button-container-actor">
               <Button
                 variant="outlined"
                 size="small"
@@ -307,7 +321,7 @@ const DisplayData = () => {
                   actorsRefetch();
                 }}
               >
-                Create new actor
+                Add new actor
               </Button>
             </div>
           </FormControl>
@@ -319,6 +333,22 @@ const DisplayData = () => {
             return (
               <div key={movie.id}>
                 <div className="movie-tile">
+                  <div className="movie-tile-header">
+                    <IconButton
+                      onClick={() => {
+                        movie.id &&
+                          deleteMovie({
+                            variables: {
+                              deleteMovieId: movie.id.toString(),
+                            },
+                          });
+                        moviesRefetch();
+                      }}
+                      className="movie-delete-icon"
+                    >
+                      <CloseRounded />
+                    </IconButton>
+                  </div>
                   <h1>{movie.movie}</h1>
                   <h3>Duration: {movie.duration}</h3>
                   <img src={movie.image}></img>

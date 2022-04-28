@@ -1,3 +1,6 @@
+:root {
+  --form-height: 200px;
+}
 body {
   background: linear-gradient(
     90deg,
@@ -39,11 +42,12 @@ body {
 .forms {
   display: flex;
   flex-direction: row;
-
-  top: 50vh;
   left: 50vw;
-  transform: translate(-50%, -150%);
+  transform: translateX(-50%);
   position: absolute;
+  border-bottom: #5e6168 solid 1px;
+  padding-bottom: 3rem;
+  height: var(--form-height);
 }
 
 .actor-form {
@@ -51,7 +55,6 @@ body {
   display: inline-flex;
   flex-wrap: wrap;
   flex-direction: column;
-  gap: 5px;
 }
 
 .movie-form {
@@ -59,15 +62,28 @@ body {
   display: inline-flex;
   flex-wrap: wrap;
   flex-direction: column;
-  gap: 5px;
+}
+.button-container-movie {
+  display: flex;
+  flex-direction: row;
+  transform: translateX(0.5rem);
+}
+
+.button-container-actor {
+  transform: translateY(2rem);
+}
+
+.button-space {
+  width: 1rem;
 }
 
 .movie-list {
-  transform: translateY(30vh);
+  transform: translateY(calc(var(--form-height) + 4rem));
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  margin-top: 3rem;
 }
 
 .movie-tile {
@@ -87,6 +103,11 @@ body {
   height: 10rem;
   object-fit: cover;
   border-radius: 5px;
+}
+
+.movie-tile-header {
+  display: flex;
+  flex-direction: row-reverse;
 }
 
 .actor-name {

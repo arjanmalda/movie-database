@@ -25,16 +25,16 @@ const resolvers = {
     addMovie: (parent, args) => {
       const movie = args.input;
       // const lastId = Movies[Movies.length - 1].id;
-      movie.id = lastId + 1;
+      // movie.id = 4;
       Movies.push(movie);
-      return movie;
+      return args.input.id;
     },
 
     linkActor: (parent, args) => {
       const actor = args.input;
-
+      console.log(args.input);
       Movies[Movies.length - 1].actors.push(actor);
-      return actor;
+      return args.input.id;
     },
 
     addActor: (parent, args) => {
@@ -42,7 +42,12 @@ const resolvers = {
       const lastId = Actors[Actors.length - 1].id;
       actor.id = lastId + 1;
       Actors.push(actor);
-      return actor;
+      return args.input.id;
+    },
+
+    deleteMovie: (parent, { id }) => {
+      Movies.splice(Movies.indexOf(Movies.find((movie) => movie.id == id)), 1);
+      return id;
     },
   },
 };
