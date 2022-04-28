@@ -24,6 +24,7 @@ const resolvers = {
   Mutation: {
     addMovie: (parent, args) => {
       const movie = args.input;
+      console.log(movie);
       // const lastId = Movies[Movies.length - 1].id;
       // movie.id = 4;
       Movies.push(movie);
@@ -32,17 +33,17 @@ const resolvers = {
 
     linkActor: (parent, args) => {
       const actor = args.input;
-      console.log(args.input);
+
       Movies[Movies.length - 1].actors.push(actor);
       return args.input.id;
     },
 
-    addActor: (parent, args) => {
-      const actor = args.input;
-      const lastId = Actors[Actors.length - 1].id;
-      actor.id = lastId + 1;
-      Actors.push(actor);
-      return args.input.id;
+    addActor: (parent, { input }) => {
+      const lastId = Actors.length;
+      input.id = lastId + 1;
+      console.log(input);
+      Actors.push(input);
+      return input.id;
     },
 
     deleteMovie: (parent, { id }) => {

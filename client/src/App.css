@@ -91,6 +91,12 @@ body {
   border-radius: 10px;
   width: 20vw;
   margin: 1rem;
+  transition: opacity 1s;
+}
+
+.movie-tile-inactive {
+  transition: opacity 1s;
+  opacity: 0.1;
 }
 
 .movie-tile > img {
