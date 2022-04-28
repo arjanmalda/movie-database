@@ -13,12 +13,14 @@ const typeDefs = gql`
     movie: String!
     duration: String!
     actors: [Actor]!
+    image: String!
   }
 
   type Actor {
     id: ID!
     actor: String!
     nationality: String!
+    image: String!
   }
 
   type Mutation {
@@ -28,9 +30,9 @@ const typeDefs = gql`
   }
 
   input AddMovieInput {
-    id: ID!
     movie: String!
     duration: String!
+    image: String!
   }
 
   input LinkActorInput {
@@ -42,6 +44,7 @@ const typeDefs = gql`
   input AddActorInput {
     actor: String!
     nationality: String!
+    image: String!
   }
 `;
 

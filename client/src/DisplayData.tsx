@@ -1,17 +1,28 @@
 import React, { useState } from "react";
 import { useQuery, useLazyQuery, gql, useMutation } from "@apollo/client";
 
+import Button from "@mui/material/Button";
+import {
+  MenuItem,
+  Select,
+  FormControl,
+  TextField,
+  Rating,
+} from "@mui/material";
+
 interface Movie {
   id: string | undefined;
   movie: string | undefined;
   duration: string | undefined;
-  actors: { id: string; actor: string; nationality: string }[];
+  actors: { id: string; actor: string; nationality: string; image: string }[];
+  image: string | undefined;
 }
 
 interface Actor {
   id: string | undefined;
   actor: string | undefined;
   nationality: string | undefined;
+  image: string | undefined;
 }
 
 const QUERY_ALL_MOVIES = gql`
@@ -24,7 +35,9 @@ const QUERY_ALL_MOVIES = gql`
         id
         actor
         nationality
+        image
       }
+      image
     }
   }
 `;
@@ -35,6 +48,7 @@ const QUERY_ALL_ACTORS = gql`
       id
       actor
       nationality
+      image
     }
   }
 `;
@@ -54,6 +68,7 @@ const ADD_MOVIE_MUTATION = gql`
     addMovie(movieInput: $movieInput) {
       movie
       duration
+      image
     }
   }
 `;
@@ -63,6 +78,7 @@ const ADD_ACTOR_MUTATION = gql`
     addActor(input: $input) {
       actor
       nationality
+      image
     }
   }
 `;
@@ -77,11 +93,14 @@ const ATTACH_ACTOR_MUTATION = gql`
   }
 `;
 
-function DisplayData() {
+const DisplayData = () => {
   const [movieName, setMovieName] = useState("");
   const [duration, setDuration] = useState("");
   const [actorName, setActorName] = useState("");
   const [nationality, setNationality] = useState("");
+  const [movieImage, setMovieImage] = useState("");
+  const [actorImage, setActorImage] = useState("");
+  const [rating, setRating] = useState<null | number>(0);
   const [linkedActors, setLinkedActors] = useState<
     Array<{ id: 1; actor: string; nationality: string }>
   >([]);
@@ -115,10 +134,11 @@ function DisplayData() {
   if (moviesError) {
     return (
       <>
+        <div className="error-background"></div>
         <h1>Movies could not be loaded...</h1>
-        <h3>
-          <a href="http://localhost:3000">Try again</a>
-        </h3>
+        <Button color="error" variant="contained" href="http://localhost:3000">
+          Try again
+        </Button>
       </>
     );
   }
@@ -140,122 +160,201 @@ function DisplayData() {
 
   return (
     <div>
-      <div>
-        <input
-          type="text"
-          placeholder="Movie name..."
-          onChange={(event) => {
-            setMovieName(event.target.value);
-          }}
-        />
-        <input
-          type="text"
-          placeholder="Duration..."
-          onChange={(event) => {
-            setDuration(event.target.value);
-          }}
-        />
-        <select
-          placeholder="Actor name..."
-          onChange={(event) => {
-            setActorName(event.target.value);
-            setLinkedActors(individualActorData);
-            console.log(actorName);
-          }}
-        >
-          {actorData &&
-            actorData.actors.map((actor: Actor) => {
-              return <option key={actor.id}>{actor.actor}</option>;
-            })}
-        </select>
-        <button
-          onClick={() => {
-            addMovie({
-              variables: {
-                input: {
-                  id: movieData.movies.length + 1,
-                  movie: movieName,
-                  duration: duration,
-                },
-              },
-            });
+      <h1>Add a movie to the list below or create a new actor</h1>
+      <div className="forms">
+        <div className="movie-form">
+          <FormControl>
+            <TextField
+              variant="standard"
+              type="text"
+              placeholder="Movie name..."
+              onChange={(event) => {
+                setMovieName(event.target.value);
+              }}
+            />
 
-            moviesRefetch();
-            actorsRefetch();
-          }}
-        >
-          Add Movie
-        </button>
-        <button
-          onClick={() => {
-            linkActor({
-              variables: {
-                input: {
-                  id: movieData.movies.length,
-                  actor: "1",
-                  nationality: "1",
-                },
-              },
-            });
-            moviesRefetch();
-          }}
-        >
-          Link actor
-        </button>
-      </div>
-      <div>
-        <input
-          type="text"
-          placeholder="Actor name..."
-          onChange={(event) => {
-            setActorName(event.target.value);
-          }}
-        />
-        <input
-          type="text"
-          placeholder="Nationality..."
-          onChange={(event) => {
-            setNationality(event.target.value);
-          }}
-        />
-        <button
-          onClick={() => {
-            addActor({
-              variables: {
-                input: { actor: actorName, nationality: nationality },
-              },
-            });
+            <TextField
+              variant="standard"
+              className="text-field"
+              type="text"
+              color="primary"
+              placeholder="Duration..."
+              onChange={(event) => {
+                setDuration(event.target.value);
+              }}
+            />
+            <TextField
+              variant="standard"
+              className="text-field"
+              type="text"
+              color="primary"
+              placeholder="Image url..."
+              onChange={(event) => {
+                setMovieImage(event.target.value);
+              }}
+            />
 
-            moviesRefetch();
-            actorsRefetch();
-          }}
-        >
-          Create new actor
-        </button>
-      </div>
-      {movieData &&
-        movieData.movies.map((movie: Movie) => {
-          return (
-            <div key={movie.id}>
-              <>
-                <h1>Movie: {movie.movie}</h1>
-                <h3>Duration: {movie.duration}</h3>
-                <h2>Actors:</h2>
-                {movie.actors.map((actor) => {
+            <Select
+              defaultValue={"Actor"}
+              inputProps={{
+                name: "select actor",
+                id: "uncontrolled-native",
+              }}
+              className="select-input"
+              label={"Actor"}
+              onChange={(event) => {
+                setActorName(event.target.value);
+                setLinkedActors(individualActorData);
+              }}
+            >
+              {actorData &&
+                actorData.actors.map((actor: Actor) => {
                   return (
-                    <div key={actor.id}>
-                      <h3>Main actor: {actor.actor}</h3>
-                      <h3>Nationality: {actor.nationality}</h3>
-                    </div>
+                    <MenuItem key={actor.id} value={10}>
+                      {actor.actor}
+                    </MenuItem>
                   );
                 })}
-              </>
+            </Select>
+            <div className="button-container">
+              <Button
+                variant="outlined"
+                size="small"
+                color="inherit"
+                onClick={() => {
+                  addMovie({
+                    variables: {
+                      input: {
+                        id: movieData.movies.length + 1,
+                        movie: movieName,
+                        duration: duration,
+                      },
+                    },
+                  });
+
+                  moviesRefetch();
+                  actorsRefetch();
+                }}
+              >
+                Add Movie
+              </Button>
+
+              <Button
+                variant="outlined"
+                size="small"
+                color="inherit"
+                onClick={() => {
+                  linkActor({
+                    variables: {
+                      input: {
+                        id: movieData.movies.length,
+                        actor: "1",
+                        nationality: "1",
+                      },
+                    },
+                  });
+                  moviesRefetch();
+                }}
+              >
+                Link actor
+              </Button>
             </div>
-          );
-        })}
-      ---------------------------------------------------------------------------------------------
+          </FormControl>
+        </div>
+        <div className="actor-form">
+          <FormControl>
+            <TextField
+              variant="standard"
+              type="text"
+              placeholder="Actor name..."
+              onChange={(event) => {
+                setActorName(event.target.value);
+              }}
+            />
+            <TextField
+              variant="standard"
+              type="text"
+              placeholder="Nationality..."
+              onChange={(event) => {
+                setNationality(event.target.value);
+              }}
+            />
+
+            <TextField
+              variant="standard"
+              className="text-field"
+              type="text"
+              color="primary"
+              placeholder="Image url..."
+              onChange={(event) => {
+                setActorImage(event.target.value);
+              }}
+            />
+
+            <div className="button-container">
+              <Button
+                variant="outlined"
+                size="small"
+                color="inherit"
+                onClick={() => {
+                  addActor({
+                    variables: {
+                      input: { actor: actorName, nationality: nationality },
+                    },
+                  });
+
+                  moviesRefetch();
+                  actorsRefetch();
+                }}
+              >
+                Create new actor
+              </Button>
+            </div>
+          </FormControl>
+        </div>
+      </div>
+      <div className="movie-list">
+        {movieData &&
+          movieData.movies.map((movie: Movie) => {
+            return (
+              <div key={movie.id}>
+                <div className="movie-tile">
+                  <h1>{movie.movie}</h1>
+                  <h3>Duration: {movie.duration}</h3>
+                  <img src={movie.image}></img>
+                  <Rating
+                    name="simple-controlled"
+                    value={rating}
+                    precision={0.5}
+                    onChange={(event, newValue) => {
+                      setRating(newValue);
+                      return newValue;
+                    }}
+                  />
+                  <br></br>
+                  <h3>Cast:</h3>
+                  <div>
+                    {movie.actors.map((actor) => {
+                      return (
+                        <div className="actor-tile" key={actor.id}>
+                          <div>
+                            <div className="actor-name">{actor.actor}</div>
+                            <div className="nationality">
+                              Nationality: {actor.nationality}
+                            </div>
+                            <img src={actor.image}></img>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+      </div>
     </div>
   );
-}
+};
 
 export default DisplayData;
