@@ -12,7 +12,7 @@ const typeDefs = gql`
     id: ID!
     movie: String!
     duration: String!
-    actors: [Actor]!
+    actors: [Actor]
     image: String!
   }
 
@@ -24,9 +24,9 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    addMovie(movieInput: AddMovieInput!): Movie
+    addMovie(movieInput: AddMovieInput!): String
     addActor(input: AddActorInput!): String
-    linkActor(input: LinkActorInput!): Actor
+    linkActor(input: LinkActorInput!): String
     deleteMovie(id: String!): String
   }
 

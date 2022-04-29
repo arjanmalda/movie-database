@@ -67,32 +67,20 @@ const GET_ACTOR_BY_NAME = gql`
 `;
 
 const ADD_MOVIE_MUTATION = gql`
-  mutation AddMovie($input: AddMovieInput!) {
-    addMovie(movieInput: $movieInput) {
-      movie
-      duration
-      image
-    }
+  mutation AddMovie($movieInput: AddMovieInput!) {
+    addMovie(movieInput: $movieInput)
   }
 `;
 
 const ADD_ACTOR_MUTATION = gql`
   mutation AddActor($input: AddActorInput!) {
-    addActor(input: $input) {
-      actor
-      nationality
-      image
-    }
+    addActor(input: $input)
   }
 `;
 
 const LINK_ACTOR_MUTATION = gql`
   mutation LinkActor($input: LinkActorInput!) {
-    linkActor(input: $input) {
-      id
-      actor
-      nationality
-    }
+    linkActor(input: $input)
   }
 `;
 
@@ -110,9 +98,6 @@ const DisplayData = () => {
   const [movieImage, setMovieImage] = useState("");
   const [actorImage, setActorImage] = useState("");
   const [rating, setRating] = useState<null | number>(0);
-  const [linkedActors, setLinkedActors] = useState<
-    Array<{ id: 1; actor: string; nationality: string }>
-  >([]);
 
   const {
     data: movieData,
@@ -132,13 +117,25 @@ const DisplayData = () => {
     { data: individualActorData, error: individualActorError },
   ] = useLazyQuery(GET_ACTOR_BY_NAME);
 
-  const [addMovie] = useMutation(ADD_MOVIE_MUTATION);
-  const [addActor] = useMutation(ADD_ACTOR_MUTATION);
-  const [linkActor] = useMutation(LINK_ACTOR_MUTATION);
+  const [
+    addMovie,
+    { data: addMovieData, loading: addMovieLoading, error: addMovieError },
+  ] = useMutation(ADD_MOVIE_MUTATION);
+  const [
+    addActor,
+    { data: addActorData, loading: addActorLoading, error: addActorError },
+  ] = useMutation(ADD_ACTOR_MUTATION);
+  const [linkActor, { data, loading, error }] =
+    useMutation(LINK_ACTOR_MUTATION);
   const [deleteMovie] = useMutation(DELETE_MOVIE_MUTATION);
 
   if (moviesLoading) {
-    return <h1>MOVIES ARE LOADING...</h1>;
+    return (
+      <>
+        <h1>MOVIES ARE LOADING...</h1>
+        <img src="https://c.tenor.com/HKpAobwCaGIAAAAM/countdown-movie-countdown.gif"></img>
+      </>
+    );
   }
 
   if (moviesError) {
@@ -146,6 +143,7 @@ const DisplayData = () => {
       <>
         <div className="error-background"></div>
         <h1>Movies could not be loaded...</h1>
+
         <Button color="error" variant="contained" href="http://localhost:3000">
           Try again
         </Button>
@@ -214,8 +212,8 @@ const DisplayData = () => {
               className="select-input"
               label={"Actor"}
               onChange={(event) => {
+                event.preventDefault();
                 setActorName(event.target.value);
-                setLinkedActors(individualActorData);
               }}
             >
               {actorData &&
@@ -236,39 +234,33 @@ const DisplayData = () => {
                 onClick={() => {
                   addMovie({
                     variables: {
-                      input: {
-                        id: movieData.movies.length + 1,
+                      movieInput: {
                         movie: movieName,
                         duration: duration,
+                        image: movieImage,
                       },
                     },
                   });
+                  console.log(actorName, nationality, actorImage);
+                  setTimeout(() => {
+                    linkActor({
+                      variables: {
+                        input: {
+                          actor: actorName,
+                          nationality: nationality,
+                          image: actorImage,
+                        },
+                      },
+                    });
+                    clearTimeout();
+                  }, 1000);
 
                   moviesRefetch();
                   actorsRefetch();
+                  console.log("Movie added");
                 }}
               >
                 Add Movie
-              </Button>
-              <div className="button-space"></div>
-              <Button
-                variant="outlined"
-                size="small"
-                color="inherit"
-                onClick={() => {
-                  linkActor({
-                    variables: {
-                      input: {
-                        id: movieData.movies.length,
-                        actor: "1",
-                        nationality: "1",
-                      },
-                    },
-                  });
-                  moviesRefetch();
-                }}
-              >
-                Link actor
               </Button>
             </div>
           </FormControl>
@@ -313,7 +305,11 @@ const DisplayData = () => {
                 onClick={() => {
                   addActor({
                     variables: {
-                      input: { actor: actorName, nationality: nationality },
+                      input: {
+                        actor: actorName,
+                        nationality: nationality,
+                        image: actorImage,
+                      },
                     },
                   });
 
@@ -364,19 +360,20 @@ const DisplayData = () => {
                   <br></br>
                   <h3>Cast:</h3>
                   <div>
-                    {movie.actors.map((actor) => {
-                      return (
-                        <div className="actor-tile" key={actor.id}>
-                          <div>
-                            <div className="actor-name">{actor.actor}</div>
-                            <div className="nationality">
-                              Nationality: {actor.nationality}
+                    {movie.actors &&
+                      movie.actors.map((actor) => {
+                        return (
+                          <div className="actor-tile" key={actor.id}>
+                            <div>
+                              <div className="actor-name">{actor.actor}</div>
+                              <div className="nationality">
+                                Nationality: {actor.nationality}
+                              </div>
+                              <img src={actor.image}></img>
                             </div>
-                            <img src={actor.image}></img>
                           </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
                   </div>
                 </div>
               </div>

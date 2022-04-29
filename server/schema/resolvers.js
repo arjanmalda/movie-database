@@ -22,25 +22,32 @@ const resolvers = {
   },
 
   Mutation: {
-    addMovie: (parent, args) => {
-      const movie = args.input;
-      console.log(movie);
+    addMovie: (parent, { movieInput }) => {
+      const lastId = Movies[Movies.length - 1].id;
+      movieInput.id = (+lastId + 1).toString();
+      console.log(movieInput);
       // const lastId = Movies[Movies.length - 1].id;
       // movie.id = 4;
-      Movies.push(movie);
-      return args.input.id;
+      Movies.push(movieInput);
+      return movieInput.id;
     },
 
-    linkActor: (parent, args) => {
-      const actor = args.input;
+    linkActor: (parent, { input }) => {
+      const actor = input;
+      if (Movies[Movies.length - 1].actors) {
+        actor.id = Movies[Movies.length - 1].actors.length + 1;
+      } else {
+        actor.id = 1;
+      }
+      Movies[Movies.length - 1].actors = [actor];
 
-      Movies[Movies.length - 1].actors.push(actor);
-      return args.input.id;
+      console.log(Movies[Movies.length - 1]);
+      return "success";
     },
 
     addActor: (parent, { input }) => {
-      const lastId = Actors.length;
-      input.id = lastId + 1;
+      const lastId = Actors[Actors.length - 1].id;
+      input.id = (+lastId + 1).toString();
       console.log(input);
       Actors.push(input);
       return input.id;
