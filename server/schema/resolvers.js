@@ -25,7 +25,7 @@ const resolvers = {
     addMovie: (parent, { movieInput }) => {
       const lastId = Movies[Movies.length - 1].id;
       movieInput.id = (+lastId + 1).toString();
-      console.log(movieInput);
+
       // const lastId = Movies[Movies.length - 1].id;
       // movie.id = 4;
       Movies.push(movieInput);
@@ -41,14 +41,13 @@ const resolvers = {
       }
       Movies[Movies.length - 1].actors = [actor];
 
-      console.log(Movies[Movies.length - 1]);
       return "success";
     },
 
     addActor: (parent, { input }) => {
       const lastId = Actors[Actors.length - 1].id;
       input.id = (+lastId + 1).toString();
-      console.log(input);
+
       Actors.push(input);
       return input.id;
     },

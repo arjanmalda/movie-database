@@ -12,8 +12,10 @@ import {
   IconButton,
 } from "@mui/material";
 import { CloseRounded } from "@mui/icons-material";
+import MovieForm from "./MovieForm";
+import ActorForm from "./ActorForm";
 
-interface Movie {
+export interface Movie {
   id: string | undefined;
   movie: string | undefined;
   duration: string | undefined;
@@ -21,7 +23,7 @@ interface Movie {
   image: string | undefined;
 }
 
-interface Actor {
+export interface Actor {
   id: string | undefined;
   actor: string | undefined;
   nationality: string | undefined;
@@ -133,7 +135,10 @@ const DisplayData = () => {
     return (
       <>
         <h1>MOVIES ARE LOADING...</h1>
-        <img src="https://c.tenor.com/HKpAobwCaGIAAAAM/countdown-movie-countdown.gif"></img>
+        <img
+          loading="lazy"
+          src="https://c.tenor.com/HKpAobwCaGIAAAAM/countdown-movie-countdown.gif"
+        ></img>
       </>
     );
   }
@@ -170,158 +175,43 @@ const DisplayData = () => {
     <div>
       <h1>Add a movie to the list below or create a new actor</h1>
       <div className="forms">
-        <div className="movie-form">
-          <FormControl>
-            <TextField
-              variant="standard"
-              type="text"
-              placeholder="Movie name..."
-              onChange={(event) => {
-                setMovieName(event.target.value);
-              }}
-            />
-
-            <TextField
-              variant="standard"
-              className="text-field"
-              type="text"
-              color="primary"
-              placeholder="Duration..."
-              onChange={(event) => {
-                setDuration(event.target.value);
-              }}
-            />
-            <TextField
-              variant="standard"
-              className="text-field"
-              type="text"
-              color="primary"
-              placeholder="Image url..."
-              onChange={(event) => {
-                setMovieImage(event.target.value);
-              }}
-            />
-            <br></br>
-            <Select
-              defaultValue={"Actor"}
-              variant="filled"
-              inputProps={{
-                name: "select actor",
-                id: "uncontrolled-native",
-              }}
-              className="select-input"
-              label={"Actor"}
-              onChange={(event) => {
-                event.preventDefault();
-                setActorName(event.target.value);
-              }}
-            >
-              {actorData &&
-                actorData.actors.map((actor: Actor) => {
-                  return (
-                    <MenuItem key={actor.id} value={actor.actor}>
-                      {actor.actor}
-                    </MenuItem>
-                  );
-                })}
-            </Select>
-            <br></br>
-            <div className="button-container-movie">
-              <Button
-                variant="outlined"
-                size="small"
-                color="inherit"
-                onClick={() => {
-                  addMovie({
-                    variables: {
-                      movieInput: {
-                        movie: movieName,
-                        duration: duration,
-                        image: movieImage,
-                      },
-                    },
-                  });
-                  console.log(actorName, nationality, actorImage);
-                  setTimeout(() => {
-                    linkActor({
-                      variables: {
-                        input: {
-                          actor: actorName,
-                          nationality: nationality,
-                          image: actorImage,
-                        },
-                      },
-                    });
-                    clearTimeout();
-                  }, 1000);
-
-                  moviesRefetch();
-                  actorsRefetch();
-                  console.log("Movie added");
-                }}
-              >
-                Add Movie
-              </Button>
-            </div>
-          </FormControl>
-        </div>
-        <div className="actor-form">
-          <FormControl>
-            <TextField
-              variant="standard"
-              type="text"
-              placeholder="Actor name..."
-              onChange={(event) => {
-                setActorName(event.target.value);
-              }}
-            />
-            <TextField
-              variant="standard"
-              type="text"
-              placeholder="Nationality..."
-              onChange={(event) => {
-                setNationality(event.target.value);
-              }}
-            />
-
-            <TextField
-              variant="standard"
-              className="text-field"
-              type="text"
-              color="primary"
-              placeholder="Image url..."
-              onChange={(event) => {
-                setActorImage(event.target.value);
-              }}
-            />
-            <br></br>
-            <br></br>
-
-            <div className="button-container-actor">
-              <Button
-                variant="outlined"
-                size="small"
-                color="inherit"
-                onClick={() => {
-                  addActor({
-                    variables: {
-                      input: {
-                        actor: actorName,
-                        nationality: nationality,
-                        image: actorImage,
-                      },
-                    },
-                  });
-
-                  moviesRefetch();
-                  actorsRefetch();
-                }}
-              >
-                Add new actor
-              </Button>
-            </div>
-          </FormControl>
-        </div>
+        <MovieForm
+          addMovie={addMovie}
+          linkActor={linkActor}
+          moviesRefetch={moviesRefetch}
+          actorsRefetch={actorsRefetch}
+          setMovieName={setMovieName}
+          setDuration={setDuration}
+          setMovieImage={setMovieImage}
+          setActorName={setActorName}
+          actorData={actorData}
+          movieName={movieName}
+          duration={duration}
+          movieImage={movieImage}
+          actorName={actorName}
+          nationality={nationality}
+          actorImage={actorImage}
+        />
+        <ActorForm
+          addMovie={addMovie}
+          linkActor={linkActor}
+          moviesRefetch={moviesRefetch}
+          actorsRefetch={actorsRefetch}
+          setMovieName={setMovieName}
+          setDuration={setDuration}
+          setMovieImage={setMovieImage}
+          setActorName={setActorName}
+          actorData={actorData}
+          movieName={movieName}
+          duration={duration}
+          movieImage={movieImage}
+          actorName={actorName}
+          nationality={nationality}
+          actorImage={actorImage}
+          setNationality={setNationality}
+          setActorImage={setActorImage}
+          addActor={addActor}
+        />
       </div>
       <div className="movie-list">
         {movieData &&
@@ -347,7 +237,7 @@ const DisplayData = () => {
                   </div>
                   <h1>{movie.movie}</h1>
                   <h3>Duration: {movie.duration}</h3>
-                  <img src={movie.image}></img>
+                  <img loading="lazy" src={movie.image}></img>
                   <Rating
                     name="simple-controlled"
                     value={rating}
@@ -369,7 +259,7 @@ const DisplayData = () => {
                               <div className="nationality">
                                 Nationality: {actor.nationality}
                               </div>
-                              <img src={actor.image}></img>
+                              <img loading="lazy" src={actor.image}></img>
                             </div>
                           </div>
                         );
