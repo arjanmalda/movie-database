@@ -28,6 +28,13 @@ const typeDefs = gql`
     addActor(input: AddActorInput!): String
     linkActor(input: LinkActorInput!): String
     deleteMovie(id: String!): String
+    changeMovie(input: ChangeMovieInput!): String
+  }
+
+  input ChangeMovieInput {
+    movie: String!
+    duration: String
+    image: String
   }
 
   input AddMovieInput {

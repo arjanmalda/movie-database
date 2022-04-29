@@ -25,9 +25,6 @@ const resolvers = {
     addMovie: (parent, { movieInput }) => {
       const lastId = Movies[Movies.length - 1].id;
       movieInput.id = (+lastId + 1).toString();
-
-      // const lastId = Movies[Movies.length - 1].id;
-      // movie.id = 4;
       Movies.push(movieInput);
       return movieInput.id;
     },
@@ -55,6 +52,16 @@ const resolvers = {
     deleteMovie: (parent, { id }) => {
       Movies.splice(Movies.indexOf(Movies.find((movie) => movie.id == id)), 1);
       return id;
+    },
+    changeMovie: (parent, { input }) => {
+      for (let i = 0; i < Movies.length; i++) {
+        if (Movies[i].movie === input.movie) {
+          Movies[i].duration = input.duration;
+          Movies[i].image = input.image;
+          break;
+        }
+      }
+      return input.movie;
     },
   },
 };

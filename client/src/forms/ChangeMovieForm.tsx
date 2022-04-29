@@ -1,14 +1,16 @@
 import {
   Button,
   FormControl,
+  IconButton,
   MenuItem,
   Select,
   TextField,
 } from "@mui/material";
+import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import React from "react";
-import { Actor, Movie } from "./DisplayData";
+import { Actor, Movie } from "../DisplayData";
 
-const MovieForm = ({
+const ChangeMovieForm = ({
   addMovie,
   linkActor,
   moviesRefetch,
@@ -24,10 +26,23 @@ const MovieForm = ({
   actorName,
   nationality,
   actorImage,
+  movieChangeForm,
+  setMovieChangeForm,
+  changeMovie,
 }: any) => {
   return (
     <div className="movie-form">
       <FormControl>
+        Add a new movie
+        <IconButton
+          onClick={() => {
+            setMovieChangeForm(false);
+            console.log(movieChangeForm);
+          }}
+          className="movie-delete-icon"
+        >
+          <ArrowBackRoundedIcon />
+        </IconButton>
         <TextField
           label="Movie name"
           variant="standard"
@@ -93,33 +108,21 @@ const MovieForm = ({
             size="small"
             color="inherit"
             onClick={() => {
-              addMovie({
+              changeMovie({
                 variables: {
-                  movieInput: {
+                  input: {
                     movie: movieName,
                     duration: duration,
                     image: movieImage,
                   },
                 },
               });
-              setTimeout(() => {
-                linkActor({
-                  variables: {
-                    input: {
-                      actor: actorName,
-                      nationality: nationality,
-                      image: actorImage,
-                    },
-                  },
-                });
-                clearTimeout();
-              }, 1000);
 
               moviesRefetch();
               actorsRefetch();
             }}
           >
-            Add Movie
+            Save Movie
           </Button>
         </div>
       </FormControl>
@@ -127,4 +130,4 @@ const MovieForm = ({
   );
 };
 
-export default MovieForm;
+export default ChangeMovieForm;

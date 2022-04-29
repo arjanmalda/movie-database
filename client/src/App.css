@@ -1,5 +1,5 @@
 :root {
-  --form-height: 250px;
+  --form-height: 325px;
 }
 body {
   background: linear-gradient(
@@ -57,6 +57,10 @@ body {
   flex-direction: column;
 }
 
+.actor-form-title-spacing {
+  height: 41px;
+}
+
 .movie-form {
   margin-right: 5rem;
   display: inline-flex;
@@ -79,30 +83,38 @@ body {
   width: 1rem;
 }
 
+.movie-list-container {
+  position: absolute;
+  transform: translate(-50%, calc(var(--form-height) + 4rem));
+  width: 50vw;
+  left: 50%;
+}
+
 .movie-list {
-  transform: translateY(calc(var(--form-height) + 4rem));
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  flex-direction: row;
+
   margin-top: 3rem;
+  overflow-x: scroll;
 }
 
 .movie-tile {
-  border: solid black 1px;
+  border: solid rgb(102, 85, 85) 2px;
   border-radius: 10px;
   width: 20vw;
   margin: 1rem;
-  transition: opacity 1s;
-}
-
-.movie-tile-inactive {
-  transition: opacity 1s;
-  opacity: 0.1;
+  transition: 1s;
+  min-height: 90vh;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .movie-tile > img {
   width: 15rem;
+  height: 20rem;
+  object-fit: cover;
   border-radius: 5px;
 }
 
@@ -114,8 +126,10 @@ body {
 }
 
 .movie-tile-header {
+  width: 20vw;
   display: flex;
   flex-direction: row-reverse;
+  align-items: flex-start;
 }
 
 .actor-name {
@@ -124,4 +138,27 @@ body {
 
 .nationality {
   font-size: 0.8rem;
+}
+
+/* width */
+::-webkit-scrollbar {
+  height: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px rgb(46, 45, 45);
+  border-radius: 10px;
+  border: solid 1px rgb(54, 54, 54);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(54, 48, 65);
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(54, 48, 65);
 }

@@ -2,18 +2,11 @@ import React, { useState } from "react";
 import { useQuery, useLazyQuery, gql, useMutation } from "@apollo/client";
 
 import Button from "@mui/material/Button";
-import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import {
-  MenuItem,
-  Select,
-  FormControl,
-  TextField,
-  Rating,
-  IconButton,
-} from "@mui/material";
+import { Rating, IconButton } from "@mui/material";
 import { CloseRounded } from "@mui/icons-material";
-import MovieForm from "./MovieForm";
-import ActorForm from "./ActorForm";
+import ActorForm from "./forms/ActorForm";
+import AddMovieForm from "./forms/AddMovieForm";
+import ChangeMovieForm from "./forms/ChangeMovieForm";
 
 export interface Movie {
   id: string | undefined;
@@ -58,16 +51,6 @@ const QUERY_ALL_ACTORS = gql`
   }
 `;
 
-const GET_ACTOR_BY_NAME = gql`
-  query Actor($actor: String!) {
-    actor(actor: $actor) {
-      id
-      actor
-      nationality
-    }
-  }
-`;
-
 const ADD_MOVIE_MUTATION = gql`
   mutation AddMovie($movieInput: AddMovieInput!) {
     addMovie(movieInput: $movieInput)
@@ -92,6 +75,12 @@ const DELETE_MOVIE_MUTATION = gql`
   }
 `;
 
+const CHANGE_MOVIE_MUTATION = gql`
+  mutation ChangeMovie($input: ChangeMovieInput!) {
+    changeMovie(input: $input)
+  }
+`;
+
 const DisplayData = () => {
   const [movieName, setMovieName] = useState("");
   const [duration, setDuration] = useState("");
@@ -99,6 +88,7 @@ const DisplayData = () => {
   const [nationality, setNationality] = useState("");
   const [movieImage, setMovieImage] = useState("");
   const [actorImage, setActorImage] = useState("");
+  const [movieChangeForm, setMovieChangeForm] = useState(false);
   const [rating, setRating] = useState<null | number>(0);
 
   const {
@@ -114,22 +104,25 @@ const DisplayData = () => {
     refetch: actorsRefetch,
   } = useQuery(QUERY_ALL_ACTORS);
 
-  const [
-    fetchActor,
-    { data: individualActorData, error: individualActorError },
-  ] = useLazyQuery(GET_ACTOR_BY_NAME);
-
-  const [
-    addMovie,
-    { data: addMovieData, loading: addMovieLoading, error: addMovieError },
-  ] = useMutation(ADD_MOVIE_MUTATION);
-  const [
-    addActor,
-    { data: addActorData, loading: addActorLoading, error: addActorError },
-  ] = useMutation(ADD_ACTOR_MUTATION);
-  const [linkActor, { data, loading, error }] =
-    useMutation(LINK_ACTOR_MUTATION);
+  const [addMovie] = useMutation(ADD_MOVIE_MUTATION, {
+    onCompleted({ addMovie }) {
+      if (addMovie) {
+        linkActor({
+          variables: {
+            input: {
+              actor: actorName,
+              nationality: nationality,
+              image: actorImage,
+            },
+          },
+        });
+      }
+    },
+  });
+  const [addActor] = useMutation(ADD_ACTOR_MUTATION);
+  const [linkActor] = useMutation(LINK_ACTOR_MUTATION);
   const [deleteMovie] = useMutation(DELETE_MOVIE_MUTATION);
+  const [changeMovie] = useMutation(CHANGE_MOVIE_MUTATION);
 
   if (moviesLoading) {
     return (
@@ -175,23 +168,49 @@ const DisplayData = () => {
     <div>
       <h1>Add a movie to the list below or create a new actor</h1>
       <div className="forms">
-        <MovieForm
-          addMovie={addMovie}
-          linkActor={linkActor}
-          moviesRefetch={moviesRefetch}
-          actorsRefetch={actorsRefetch}
-          setMovieName={setMovieName}
-          setDuration={setDuration}
-          setMovieImage={setMovieImage}
-          setActorName={setActorName}
-          actorData={actorData}
-          movieName={movieName}
-          duration={duration}
-          movieImage={movieImage}
-          actorName={actorName}
-          nationality={nationality}
-          actorImage={actorImage}
-        />
+        {movieChangeForm ? (
+          <ChangeMovieForm
+            addMovie={addMovie}
+            linkActor={linkActor}
+            moviesRefetch={moviesRefetch}
+            actorsRefetch={actorsRefetch}
+            setMovieName={setMovieName}
+            setDuration={setDuration}
+            setMovieImage={setMovieImage}
+            setActorName={setActorName}
+            actorData={actorData}
+            movieName={movieName}
+            duration={duration}
+            movieImage={movieImage}
+            actorName={actorName}
+            nationality={nationality}
+            actorImage={actorImage}
+            setMovieChangeForm={setMovieChangeForm}
+            movieChangeForm={movieChangeForm}
+            changeMovie={changeMovie}
+          />
+        ) : (
+          <AddMovieForm
+            addMovie={addMovie}
+            linkActor={linkActor}
+            moviesRefetch={moviesRefetch}
+            actorsRefetch={actorsRefetch}
+            setMovieName={setMovieName}
+            setDuration={setDuration}
+            setMovieImage={setMovieImage}
+            setActorName={setActorName}
+            actorData={actorData}
+            movieName={movieName}
+            duration={duration}
+            movieImage={movieImage}
+            actorName={actorName}
+            nationality={nationality}
+            actorImage={actorImage}
+            setMovieChangeForm={setMovieChangeForm}
+            movieChangeForm={movieChangeForm}
+          />
+        )}
+        <div className="form-margin"></div>
         <ActorForm
           addMovie={addMovie}
           linkActor={linkActor}
@@ -213,62 +232,64 @@ const DisplayData = () => {
           addActor={addActor}
         />
       </div>
-      <div className="movie-list">
-        {movieData &&
-          movieData.movies.map((movie: Movie) => {
-            return (
-              <div key={movie.id}>
-                <div className="movie-tile">
-                  <div className="movie-tile-header">
-                    <IconButton
-                      onClick={() => {
-                        movie.id &&
-                          deleteMovie({
-                            variables: {
-                              deleteMovieId: movie.id.toString(),
-                            },
-                          });
-                        moviesRefetch();
+      <div className="movie-list-container">
+        <div className="movie-list">
+          {movieData &&
+            movieData.movies.map((movie: Movie) => {
+              return (
+                <div key={movie.id}>
+                  <div className="movie-tile">
+                    <div className="movie-tile-header">
+                      <IconButton
+                        onClick={() => {
+                          movie.id &&
+                            deleteMovie({
+                              variables: {
+                                deleteMovieId: movie.id.toString(),
+                              },
+                            });
+                          moviesRefetch();
+                        }}
+                        className="movie-delete-icon"
+                      >
+                        <CloseRounded />
+                      </IconButton>
+                    </div>
+                    <h1>{movie.movie}</h1>
+                    <h3>Duration: {movie.duration}</h3>
+                    <img loading="lazy" src={movie.image}></img>
+                    <Rating
+                      name="simple-controlled"
+                      value={rating}
+                      precision={0.5}
+                      onChange={(event, newValue) => {
+                        setRating(newValue);
+                        return newValue;
                       }}
-                      className="movie-delete-icon"
-                    >
-                      <CloseRounded />
-                    </IconButton>
-                  </div>
-                  <h1>{movie.movie}</h1>
-                  <h3>Duration: {movie.duration}</h3>
-                  <img loading="lazy" src={movie.image}></img>
-                  <Rating
-                    name="simple-controlled"
-                    value={rating}
-                    precision={0.5}
-                    onChange={(event, newValue) => {
-                      setRating(newValue);
-                      return newValue;
-                    }}
-                  />
-                  <br></br>
-                  <h3>Cast:</h3>
-                  <div>
-                    {movie.actors &&
-                      movie.actors.map((actor) => {
-                        return (
-                          <div className="actor-tile" key={actor.id}>
-                            <div>
-                              <div className="actor-name">{actor.actor}</div>
-                              <div className="nationality">
-                                Nationality: {actor.nationality}
+                    />
+                    <br></br>
+                    <h3>Cast:</h3>
+                    <div>
+                      {movie.actors &&
+                        movie.actors.map((actor) => {
+                          return (
+                            <div className="actor-tile" key={actor.id}>
+                              <div>
+                                <div className="actor-name">{actor.actor}</div>
+                                <div className="nationality">
+                                  Nationality: {actor.nationality}
+                                </div>
+                                <img loading="lazy" src={actor.image}></img>
                               </div>
-                              <img loading="lazy" src={actor.image}></img>
                             </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+        </div>
       </div>
     </div>
   );

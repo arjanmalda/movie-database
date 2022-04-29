@@ -14,10 +14,13 @@ const ActorForm = ({
   return (
     <div className="actor-form">
       <FormControl>
+        Add a new actor to the list
+        <div className="actor-form-title-spacing"></div>
         <TextField
+          label="Actor name"
           variant="standard"
           type="text"
-          placeholder="Actor name..."
+          placeholder="Tom Cruise"
           onChange={(event) => {
             setActorName(event.target.value);
           }}
@@ -25,25 +28,26 @@ const ActorForm = ({
         <TextField
           variant="standard"
           type="text"
-          placeholder="Nationality..."
+          label="Nationality"
+          placeholder="American"
           onChange={(event) => {
             setNationality(event.target.value);
           }}
         />
-
         <TextField
           variant="standard"
           className="text-field"
           type="text"
           color="primary"
-          placeholder="Image url..."
+          label="Image"
+          placeholder="https://image.png"
           onChange={(event) => {
             setActorImage(event.target.value);
           }}
         />
         <br></br>
         <br></br>
-
+        <br></br>
         <div className="button-container-actor">
           <Button
             variant="outlined"
@@ -64,7 +68,7 @@ const ActorForm = ({
               actorsRefetch();
             }}
           >
-            Add new actor
+            Add actor
           </Button>
         </div>
       </FormControl>
