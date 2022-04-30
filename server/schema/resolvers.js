@@ -53,6 +53,10 @@ const resolvers = {
       Movies.splice(Movies.indexOf(Movies.find((movie) => movie.id == id)), 1);
       return id;
     },
+    deleteActor: (parent, { id }) => {
+      Actors.splice(Actors.indexOf(Actors.find((actor) => actor.id == id)), 1);
+      return id;
+    },
     changeMovie: (parent, { input }) => {
       for (let i = 0; i < Movies.length; i++) {
         if (Movies[i].movie === input.movie) {

@@ -3,7 +3,7 @@ import { useQuery, useLazyQuery, gql, useMutation } from "@apollo/client";
 
 import Button from "@mui/material/Button";
 import { Rating, IconButton } from "@mui/material";
-import { CloseRounded } from "@mui/icons-material";
+import DeleteIcon from "@mui/icons-material/Delete";
 import ActorForm from "./forms/ActorForm";
 import AddMovieForm from "./forms/AddMovieForm";
 import ChangeMovieForm from "./forms/ChangeMovieForm";
@@ -75,6 +75,12 @@ const DELETE_MOVIE_MUTATION = gql`
   }
 `;
 
+const DELETE_ACTOR_MUTATION = gql`
+  mutation DeleteActor($deleteActorId: String!) {
+    deleteActor(id: $deleteActorId)
+  }
+`;
+
 const CHANGE_MOVIE_MUTATION = gql`
   mutation ChangeMovie($input: ChangeMovieInput!) {
     changeMovie(input: $input)
@@ -122,6 +128,8 @@ const DisplayData = () => {
   const [addActor] = useMutation(ADD_ACTOR_MUTATION);
   const [linkActor] = useMutation(LINK_ACTOR_MUTATION);
   const [deleteMovie] = useMutation(DELETE_MOVIE_MUTATION);
+  const [deleteActor] = useMutation(DELETE_ACTOR_MUTATION);
+
   const [changeMovie] = useMutation(CHANGE_MOVIE_MUTATION);
 
   console.log(actorData);
@@ -254,7 +262,7 @@ const DisplayData = () => {
                         }}
                         className="movie-delete-icon"
                       >
-                        <CloseRounded />
+                        <DeleteIcon />
                       </IconButton>
                     </div>
                     <h1>{movie.movie}</h1>
@@ -306,6 +314,20 @@ const DisplayData = () => {
                       Nationality: {actor.nationality}
                     </div>
                     <img loading="lazy" src={actor.image}></img>
+                    <IconButton
+                      onClick={() => {
+                        actor.id &&
+                          deleteActor({
+                            variables: {
+                              deleteActorId: actor.id.toString(),
+                            },
+                          });
+                        actorsRefetch();
+                      }}
+                      className="movie-delete-icon"
+                    >
+                      <DeleteIcon />
+                    </IconButton>
                   </div>
                 </div>
               );

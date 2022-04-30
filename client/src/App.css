@@ -145,8 +145,6 @@ body {
   top: calc(var(--form-height) + 1050px);
   left: 50%;
   transform: translateX(-50%);
-  width: 50vw;
-  overflow-x: auto;
 }
 
 .actor-list {
@@ -154,11 +152,9 @@ body {
   flex-direction: row;
   align-items: center;
   gap: 20px;
+  width: 50vw;
+  overflow-x: auto;
 }
-
-/* .actor-tile {
-  margin: 5xp;
-} */
 
 /* width */
 ::-webkit-scrollbar {
