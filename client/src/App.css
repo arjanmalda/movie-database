@@ -95,7 +95,7 @@ body {
   flex-direction: row;
 
   margin-top: 3rem;
-  overflow-x: scroll;
+  overflow-x: auto;
 }
 
 .movie-tile {
@@ -139,6 +139,26 @@ body {
 .nationality {
   font-size: 0.8rem;
 }
+
+.actor-list-container {
+  position: absolute;
+  top: calc(var(--form-height) + 1050px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50vw;
+  overflow-x: auto;
+}
+
+.actor-list {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+}
+
+/* .actor-tile {
+  margin: 5xp;
+} */
 
 /* width */
 ::-webkit-scrollbar {

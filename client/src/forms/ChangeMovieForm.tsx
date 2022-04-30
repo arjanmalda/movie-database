@@ -33,7 +33,7 @@ const ChangeMovieForm = ({
   return (
     <div className="movie-form">
       <FormControl>
-        Add a new movie
+        Change an existing new movie
         <IconButton
           onClick={() => {
             setMovieChangeForm(false);

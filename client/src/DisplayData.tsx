@@ -124,6 +124,8 @@ const DisplayData = () => {
   const [deleteMovie] = useMutation(DELETE_MOVIE_MUTATION);
   const [changeMovie] = useMutation(CHANGE_MOVIE_MUTATION);
 
+  console.log(actorData);
+
   if (moviesLoading) {
     return (
       <>
@@ -285,6 +287,25 @@ const DisplayData = () => {
                           );
                         })}
                     </div>
+                  </div>
+                </div>
+              );
+            })}
+        </div>
+      </div>
+      <div className="actor-list-container">
+        <h1>Available actors</h1>
+        <div className="actor-list">
+          {actorData.actors &&
+            actorData.actors.map((actor: Actor) => {
+              return (
+                <div className="actor-tile" key={actor.id}>
+                  <div>
+                    <div className="actor-name">{actor.actor}</div>
+                    <div className="nationality">
+                      Nationality: {actor.nationality}
+                    </div>
+                    <img loading="lazy" src={actor.image}></img>
                   </div>
                 </div>
               );
