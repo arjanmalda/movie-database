@@ -1,4 +1,3 @@
-import { CloseRounded } from "@mui/icons-material";
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 
 import {
@@ -10,8 +9,7 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import React from "react";
-import { Actor, Movie } from "../DisplayData";
+import { Actor } from "../DisplayData";
 
 const AddMovieForm = ({
   addMovie,

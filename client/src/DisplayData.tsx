@@ -136,6 +136,7 @@ const DisplayData = () => {
       <>
         <h1>MOVIES ARE LOADING...</h1>
         <img
+          alt={`Movie countdown gif`}
           loading="lazy"
           src="https://c.tenor.com/HKpAobwCaGIAAAAM/countdown-movie-countdown.gif"
         ></img>
@@ -296,7 +297,11 @@ const DisplayData = () => {
                     </div>
                     <h1 className="movie-title"> {movie.movie}</h1>
                     <h3>Duration: {movie.duration}</h3>
-                    <img loading="lazy" src={movie.image}></img>
+                    <img
+                      loading="lazy"
+                      alt={`Movie poster: ${movie.movie}`}
+                      src={movie.image}
+                    ></img>
                     <Rating
                       name="simple-controlled"
                       value={rating}
@@ -318,7 +323,11 @@ const DisplayData = () => {
                                 <div className="nationality">
                                   Nationality: {actor.nationality}
                                 </div>
-                                <img loading="lazy" src={actor.image}></img>
+                                <img
+                                  loading="lazy"
+                                  alt={`Main actor image: ${actor.actor}`}
+                                  src={actor.image}
+                                ></img>
                               </div>
                             </div>
                           );
@@ -341,7 +350,11 @@ const DisplayData = () => {
                   <div className="nationality">
                     Nationality: {actor.nationality}
                   </div>
-                  <img loading="lazy" src={actor.image}></img>
+                  <img
+                    alt={`Main actor image: ${actor.actor}`}
+                    loading="lazy"
+                    src={actor.image}
+                  ></img>
                   <IconButton
                     onClick={() => {
                       actor.id &&
