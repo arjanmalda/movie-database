@@ -1,5 +1,6 @@
 import {
   Button,
+  CircularProgress,
   FormControl,
   IconButton,
   MenuItem,
@@ -20,7 +21,7 @@ const ChangeMovieForm = ({
   movieName,
   duration,
   movieImage,
-  movieChangeForm,
+  changeMovieLoading,
   setMovieChangeForm,
   changeMovie,
 }: any) => {
@@ -31,7 +32,6 @@ const ChangeMovieForm = ({
         <IconButton
           onClick={() => {
             setMovieChangeForm(false);
-            console.log(movieChangeForm);
           }}
           className="movie-delete-icon"
         >
@@ -97,27 +97,31 @@ const ChangeMovieForm = ({
         </Select>
         <br></br>
         <div className="button-container-movie">
-          <Button
-            variant="outlined"
-            size="small"
-            color="inherit"
-            onClick={() => {
-              changeMovie({
-                variables: {
-                  input: {
-                    movie: movieName,
-                    duration: duration,
-                    image: movieImage,
+          {changeMovieLoading ? (
+            <CircularProgress />
+          ) : (
+            <Button
+              variant="outlined"
+              size="small"
+              color="inherit"
+              onClick={() => {
+                changeMovie({
+                  variables: {
+                    input: {
+                      movie: movieName,
+                      duration: duration,
+                      image: movieImage,
+                    },
                   },
-                },
-              });
+                });
 
-              moviesRefetch();
-              actorsRefetch();
-            }}
-          >
-            Change Movie
-          </Button>
+                moviesRefetch();
+                actorsRefetch();
+              }}
+            >
+              Change Movie
+            </Button>
+          )}
         </div>
       </FormControl>
     </div>

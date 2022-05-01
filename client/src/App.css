@@ -113,6 +113,10 @@ body {
   object-fit: cover;
   border-radius: 5px;
 }
+.actor-tile {
+  display: flex;
+  flex-direction: column;
+}
 
 .actor-tile img {
   width: 10rem;

@@ -25,20 +25,11 @@ const resolvers = {
     addMovie: (parent, { movieInput }) => {
       const lastId = Movies[Movies.length - 1].id;
       movieInput.id = (+lastId + 1).toString();
+      const actor = Actors.find((actor) => actor.actor === movieInput.actor);
+      movieInput.actors = [actor];
+      console.log(movieInput.actor);
       Movies.push(movieInput);
       return movieInput.id;
-    },
-
-    linkActor: (parent, { input }) => {
-      const actor = input;
-      if (Movies[Movies.length - 1].actors) {
-        actor.id = Movies[Movies.length - 1].actors.length + 1;
-      } else {
-        actor.id = 1;
-      }
-      Movies[Movies.length - 1].actors = [actor];
-
-      return "success";
     },
 
     addActor: (parent, { input }) => {

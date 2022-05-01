@@ -1,4 +1,10 @@
-import { Button, FormControl, IconButton, TextField } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  FormControl,
+  IconButton,
+  TextField,
+} from "@mui/material";
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 const AddActorForm = ({
   moviesRefetch,
@@ -10,7 +16,7 @@ const AddActorForm = ({
   setNationality,
   setActorImage,
   addActor,
-  actorChangeForm,
+  addActorLoading,
   setActorChangeForm,
 }: any) => {
   return (
@@ -20,7 +26,6 @@ const AddActorForm = ({
         <IconButton
           onClick={() => {
             setActorChangeForm(false);
-            console.log(actorChangeForm);
           }}
           className="movie-delete-icon"
         >
@@ -59,27 +64,31 @@ const AddActorForm = ({
         <br></br>
         <br></br>
         <div className="button-container-actor">
-          <Button
-            variant="outlined"
-            size="small"
-            color="inherit"
-            onClick={() => {
-              addActor({
-                variables: {
-                  input: {
-                    actor: actorName,
-                    nationality: nationality,
-                    image: actorImage,
+          {addActorLoading ? (
+            <CircularProgress />
+          ) : (
+            <Button
+              variant="outlined"
+              size="small"
+              color="inherit"
+              onClick={() => {
+                addActor({
+                  variables: {
+                    input: {
+                      actor: actorName,
+                      nationality: nationality,
+                      image: actorImage,
+                    },
                   },
-                },
-              });
+                });
 
-              moviesRefetch();
-              actorsRefetch();
-            }}
-          >
-            Add actor
-          </Button>
+                moviesRefetch();
+                actorsRefetch();
+              }}
+            >
+              Add actor
+            </Button>
+          )}
         </div>
       </FormControl>
     </div>

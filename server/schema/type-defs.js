@@ -26,7 +26,6 @@ const typeDefs = gql`
   type Mutation {
     addMovie(movieInput: AddMovieInput!): String
     addActor(input: AddActorInput!): String
-    linkActor(input: LinkActorInput!): String
     deleteMovie(id: String!): String
     deleteActor(id: String!): String
     changeMovie(input: ChangeMovieInput!): String
@@ -49,12 +48,7 @@ const typeDefs = gql`
     movie: String!
     duration: String!
     image: String!
-  }
-
-  input LinkActorInput {
     actor: String!
-    nationality: String!
-    image: String!
   }
 
   input AddActorInput {

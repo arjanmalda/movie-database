@@ -3,6 +3,7 @@ import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 
 import {
   Button,
+  CircularProgress,
   FormControl,
   IconButton,
   MenuItem,
@@ -14,7 +15,7 @@ import { Actor, Movie } from "../DisplayData";
 
 const AddMovieForm = ({
   addMovie,
-  linkActor,
+
   moviesRefetch,
   actorsRefetch,
   setMovieName,
@@ -26,10 +27,9 @@ const AddMovieForm = ({
   duration,
   movieImage,
   actorName,
-  nationality,
-  actorImage,
+
   setMovieChangeForm,
-  movieChangeForm,
+  addMovieLoading,
 }: any) => {
   return (
     <div className="movie-form">
@@ -38,7 +38,6 @@ const AddMovieForm = ({
         <IconButton
           onClick={() => {
             setMovieChangeForm(true);
-            console.log(movieChangeForm);
           }}
           className="movie-delete-icon"
         >
@@ -91,6 +90,7 @@ const AddMovieForm = ({
           onChange={(event) => {
             event.preventDefault();
             setActorName(event.target.value);
+            console.log(actorName);
           }}
         >
           {actorData &&
@@ -104,27 +104,32 @@ const AddMovieForm = ({
         </Select>
         <br></br>
         <div className="button-container-movie">
-          <Button
-            variant="outlined"
-            size="small"
-            color="inherit"
-            onClick={() => {
-              addMovie({
-                variables: {
-                  movieInput: {
-                    movie: movieName,
-                    duration: duration,
-                    image: movieImage,
+          {addMovieLoading ? (
+            <CircularProgress />
+          ) : (
+            <Button
+              variant="outlined"
+              size="small"
+              color="inherit"
+              onClick={() => {
+                addMovie({
+                  variables: {
+                    movieInput: {
+                      movie: movieName,
+                      duration: duration,
+                      image: movieImage,
+                      actor: actorName,
+                    },
                   },
-                },
-              });
+                });
 
-              moviesRefetch();
-              actorsRefetch();
-            }}
-          >
-            Add Movie
-          </Button>
+                moviesRefetch();
+                actorsRefetch();
+              }}
+            >
+              Add Movie
+            </Button>
+          )}
         </div>
       </FormControl>
     </div>

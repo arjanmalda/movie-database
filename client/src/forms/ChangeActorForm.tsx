@@ -1,4 +1,10 @@
-import { Button, FormControl, IconButton, TextField } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  FormControl,
+  IconButton,
+  TextField,
+} from "@mui/material";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 const ChangeActorForm = ({
   moviesRefetch,
@@ -9,9 +15,9 @@ const ChangeActorForm = ({
   actorImage,
   setNationality,
   setActorImage,
-  actorChangeForm,
   setActorChangeForm,
   changeActor,
+  changeActorLoading,
 }: any) => {
   return (
     <div className="actor-form">
@@ -20,7 +26,6 @@ const ChangeActorForm = ({
         <IconButton
           onClick={() => {
             setActorChangeForm(true);
-            console.log(actorChangeForm);
           }}
           className="movie-delete-icon"
         >
@@ -59,27 +64,31 @@ const ChangeActorForm = ({
         <br></br>
         <br></br>
         <div className="button-container-actor">
-          <Button
-            variant="outlined"
-            size="small"
-            color="inherit"
-            onClick={() => {
-              changeActor({
-                variables: {
-                  input: {
-                    actor: actorName,
-                    nationality: nationality,
-                    image: actorImage,
+          {changeActorLoading ? (
+            <CircularProgress />
+          ) : (
+            <Button
+              variant="outlined"
+              size="small"
+              color="inherit"
+              onClick={() => {
+                changeActor({
+                  variables: {
+                    input: {
+                      actor: actorName,
+                      nationality: nationality,
+                      image: actorImage,
+                    },
                   },
-                },
-              });
+                });
 
-              moviesRefetch();
-              actorsRefetch();
-            }}
-          >
-            Change actor
-          </Button>
+                moviesRefetch();
+                actorsRefetch();
+              }}
+            >
+              Change actor
+            </Button>
+          )}
         </div>
       </FormControl>
     </div>

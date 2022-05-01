@@ -7,7 +7,7 @@ import { useState } from "react";
 import { useQuery, gql, useMutation } from "@apollo/client";
 
 import Button from "@mui/material/Button";
-import { Rating, IconButton } from "@mui/material";
+import { Rating, IconButton, CircularProgress } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 export interface Movie {
@@ -65,12 +65,6 @@ const ADD_ACTOR_MUTATION = gql`
   }
 `;
 
-const LINK_ACTOR_MUTATION = gql`
-  mutation LinkActor($input: LinkActorInput!) {
-    linkActor(input: $input)
-  }
-`;
-
 const DELETE_MOVIE_MUTATION = gql`
   mutation DeleteMovie($deleteMovieId: String!) {
     deleteMovie(id: $deleteMovieId)
@@ -119,29 +113,23 @@ const DisplayData = () => {
     refetch: actorsRefetch,
   } = useQuery(QUERY_ALL_ACTORS);
 
-  const [addMovie] = useMutation(ADD_MOVIE_MUTATION, {
-    onCompleted({ addMovie }) {
-      if (addMovie) {
-        linkActor({
-          variables: {
-            input: {
-              actor: actorName,
-              nationality: nationality,
-              image: actorImage,
-            },
-          },
-        });
-      }
-    },
-  });
-  const [addActor] = useMutation(ADD_ACTOR_MUTATION);
-  const [linkActor] = useMutation(LINK_ACTOR_MUTATION);
-  const [deleteMovie] = useMutation(DELETE_MOVIE_MUTATION);
-  const [deleteActor] = useMutation(DELETE_ACTOR_MUTATION);
-  const [changeMovie] = useMutation(CHANGE_MOVIE_MUTATION);
-  const [changeActor] = useMutation(CHANGE_ACTOR_MUTATION);
+  const [addMovie, { loading: addMovieLoading }] =
+    useMutation(ADD_MOVIE_MUTATION);
+  const [addActor, { loading: addActorLoading }] =
+    useMutation(ADD_ACTOR_MUTATION);
 
-  console.log(actorData);
+  const [deleteMovie, { loading: deleteMovieLoading }] = useMutation(
+    DELETE_MOVIE_MUTATION
+  );
+  const [deleteActor, { loading: deleteActorLoading }] = useMutation(
+    DELETE_ACTOR_MUTATION
+  );
+  const [changeMovie, { loading: changeMovieLoading }] = useMutation(
+    CHANGE_MOVIE_MUTATION
+  );
+  const [changeActor, { loading: changeActorLoading }] = useMutation(
+    CHANGE_ACTOR_MUTATION
+  );
 
   if (moviesLoading) {
     return (
@@ -190,7 +178,6 @@ const DisplayData = () => {
         {movieChangeForm ? (
           <ChangeMovieForm
             addMovie={addMovie}
-            linkActor={linkActor}
             moviesRefetch={moviesRefetch}
             actorsRefetch={actorsRefetch}
             setMovieName={setMovieName}
@@ -207,11 +194,11 @@ const DisplayData = () => {
             setMovieChangeForm={setMovieChangeForm}
             movieChangeForm={movieChangeForm}
             changeMovie={changeMovie}
+            changeMovieLoading={changeMovieLoading}
           />
         ) : (
           <AddMovieForm
             addMovie={addMovie}
-            linkActor={linkActor}
             moviesRefetch={moviesRefetch}
             actorsRefetch={actorsRefetch}
             setMovieName={setMovieName}
@@ -227,13 +214,13 @@ const DisplayData = () => {
             actorImage={actorImage}
             setMovieChangeForm={setMovieChangeForm}
             movieChangeForm={movieChangeForm}
+            addMovieLoading={addMovieLoading}
           />
         )}
         <div className="form-margin"></div>
         {actorChangeForm ? (
           <AddActorForm
             addMovie={addMovie}
-            linkActor={linkActor}
             moviesRefetch={moviesRefetch}
             actorsRefetch={actorsRefetch}
             setMovieName={setMovieName}
@@ -252,11 +239,11 @@ const DisplayData = () => {
             addActor={addActor}
             actorChangeForm={actorChangeForm}
             setActorChangeForm={setActorChangeForm}
+            addActorLoading={addActorLoading}
           />
         ) : (
           <ChangeActorForm
             addMovie={addMovie}
-            linkActor={linkActor}
             moviesRefetch={moviesRefetch}
             actorsRefetch={actorsRefetch}
             setMovieName={setMovieName}
@@ -276,6 +263,7 @@ const DisplayData = () => {
             actorChangeForm={actorChangeForm}
             setActorChangeForm={setActorChangeForm}
             changeActor={changeActor}
+            changeActorLoading={changeActorLoading}
           />
         )}
       </div>
@@ -299,10 +287,14 @@ const DisplayData = () => {
                         }}
                         className="movie-delete-icon"
                       >
-                        <DeleteIcon />
+                        {deleteMovieLoading ? (
+                          <CircularProgress />
+                        ) : (
+                          <DeleteIcon />
+                        )}
                       </IconButton>
                     </div>
-                    <h1>{movie.movie}</h1>
+                    <h1 className="movie-title"> {movie.movie}</h1>
                     <h3>Duration: {movie.duration}</h3>
                     <img loading="lazy" src={movie.image}></img>
                     <Rating
@@ -345,27 +337,25 @@ const DisplayData = () => {
             actorData.actors.map((actor: Actor) => {
               return (
                 <div className="actor-tile" key={actor.id}>
-                  <div>
-                    <div className="actor-name">{actor.actor}</div>
-                    <div className="nationality">
-                      Nationality: {actor.nationality}
-                    </div>
-                    <img loading="lazy" src={actor.image}></img>
-                    <IconButton
-                      onClick={() => {
-                        actor.id &&
-                          deleteActor({
-                            variables: {
-                              deleteActorId: actor.id.toString(),
-                            },
-                          });
-                        actorsRefetch();
-                      }}
-                      className="movie-delete-icon"
-                    >
-                      <DeleteIcon />
-                    </IconButton>
+                  <div className="actor-name">{actor.actor}</div>
+                  <div className="nationality">
+                    Nationality: {actor.nationality}
                   </div>
+                  <img loading="lazy" src={actor.image}></img>
+                  <IconButton
+                    onClick={() => {
+                      actor.id &&
+                        deleteActor({
+                          variables: {
+                            deleteActorId: actor.id.toString(),
+                          },
+                        });
+                      actorsRefetch();
+                    }}
+                    className="movie-delete-icon"
+                  >
+                    {deleteActorLoading ? <CircularProgress /> : <DeleteIcon />}
+                  </IconButton>
                 </div>
               );
             })}
