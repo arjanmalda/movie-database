@@ -7,12 +7,9 @@ import {
   TextField,
 } from "@mui/material";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
-import React from "react";
-import { Actor, Movie } from "../DisplayData";
+import { Actor } from "../DisplayData";
 
 const ChangeMovieForm = ({
-  addMovie,
-  linkActor,
   moviesRefetch,
   actorsRefetch,
   setMovieName,
@@ -23,9 +20,6 @@ const ChangeMovieForm = ({
   movieName,
   duration,
   movieImage,
-  actorName,
-  nationality,
-  actorImage,
   movieChangeForm,
   setMovieChangeForm,
   changeMovie,
@@ -122,7 +116,7 @@ const ChangeMovieForm = ({
               actorsRefetch();
             }}
           >
-            Save Movie
+            Change Movie
           </Button>
         </div>
       </FormControl>

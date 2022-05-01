@@ -1,12 +1,14 @@
-import React, { useState } from "react";
-import { useQuery, useLazyQuery, gql, useMutation } from "@apollo/client";
+import AddMovieForm from "./forms/AddMovieForm";
+import ChangeMovieForm from "./forms/ChangeMovieForm";
+import AddActorForm from "./forms/AddActorForm";
+import ChangeActorForm from "./forms/ChangeActorForm";
+
+import { useState } from "react";
+import { useQuery, gql, useMutation } from "@apollo/client";
 
 import Button from "@mui/material/Button";
 import { Rating, IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import ActorForm from "./forms/ActorForm";
-import AddMovieForm from "./forms/AddMovieForm";
-import ChangeMovieForm from "./forms/ChangeMovieForm";
 
 export interface Movie {
   id: string | undefined;
@@ -87,6 +89,12 @@ const CHANGE_MOVIE_MUTATION = gql`
   }
 `;
 
+const CHANGE_ACTOR_MUTATION = gql`
+  mutation ChangeActor($input: ChangeActorInput!) {
+    changeActor(input: $input)
+  }
+`;
+
 const DisplayData = () => {
   const [movieName, setMovieName] = useState("");
   const [duration, setDuration] = useState("");
@@ -95,6 +103,7 @@ const DisplayData = () => {
   const [movieImage, setMovieImage] = useState("");
   const [actorImage, setActorImage] = useState("");
   const [movieChangeForm, setMovieChangeForm] = useState(false);
+  const [actorChangeForm, setActorChangeForm] = useState(false);
   const [rating, setRating] = useState<null | number>(0);
 
   const {
@@ -129,8 +138,8 @@ const DisplayData = () => {
   const [linkActor] = useMutation(LINK_ACTOR_MUTATION);
   const [deleteMovie] = useMutation(DELETE_MOVIE_MUTATION);
   const [deleteActor] = useMutation(DELETE_ACTOR_MUTATION);
-
   const [changeMovie] = useMutation(CHANGE_MOVIE_MUTATION);
+  const [changeActor] = useMutation(CHANGE_ACTOR_MUTATION);
 
   console.log(actorData);
 
@@ -221,26 +230,54 @@ const DisplayData = () => {
           />
         )}
         <div className="form-margin"></div>
-        <ActorForm
-          addMovie={addMovie}
-          linkActor={linkActor}
-          moviesRefetch={moviesRefetch}
-          actorsRefetch={actorsRefetch}
-          setMovieName={setMovieName}
-          setDuration={setDuration}
-          setMovieImage={setMovieImage}
-          setActorName={setActorName}
-          actorData={actorData}
-          movieName={movieName}
-          duration={duration}
-          movieImage={movieImage}
-          actorName={actorName}
-          nationality={nationality}
-          actorImage={actorImage}
-          setNationality={setNationality}
-          setActorImage={setActorImage}
-          addActor={addActor}
-        />
+        {actorChangeForm ? (
+          <AddActorForm
+            addMovie={addMovie}
+            linkActor={linkActor}
+            moviesRefetch={moviesRefetch}
+            actorsRefetch={actorsRefetch}
+            setMovieName={setMovieName}
+            setDuration={setDuration}
+            setMovieImage={setMovieImage}
+            setActorName={setActorName}
+            actorData={actorData}
+            movieName={movieName}
+            duration={duration}
+            movieImage={movieImage}
+            actorName={actorName}
+            nationality={nationality}
+            actorImage={actorImage}
+            setNationality={setNationality}
+            setActorImage={setActorImage}
+            addActor={addActor}
+            actorChangeForm={actorChangeForm}
+            setActorChangeForm={setActorChangeForm}
+          />
+        ) : (
+          <ChangeActorForm
+            addMovie={addMovie}
+            linkActor={linkActor}
+            moviesRefetch={moviesRefetch}
+            actorsRefetch={actorsRefetch}
+            setMovieName={setMovieName}
+            setDuration={setDuration}
+            setMovieImage={setMovieImage}
+            setActorName={setActorName}
+            actorData={actorData}
+            movieName={movieName}
+            duration={duration}
+            movieImage={movieImage}
+            actorName={actorName}
+            nationality={nationality}
+            actorImage={actorImage}
+            setNationality={setNationality}
+            setActorImage={setActorImage}
+            addActor={addActor}
+            actorChangeForm={actorChangeForm}
+            setActorChangeForm={setActorChangeForm}
+            changeActor={changeActor}
+          />
+        )}
       </div>
       <div className="movie-list-container">
         <div className="movie-list">

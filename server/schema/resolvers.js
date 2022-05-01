@@ -67,6 +67,16 @@ const resolvers = {
       }
       return input.movie;
     },
+    changeActor: (parent, { input }) => {
+      for (let i = 0; i < Actors.length; i++) {
+        if (Actors[i].actor === input.actor) {
+          Actors[i].nationality = input.nationality;
+          Actors[i].image = input.image;
+          break;
+        }
+      }
+      return input.actor;
+    },
   },
 };
 

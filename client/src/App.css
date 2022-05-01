@@ -57,10 +57,6 @@ body {
   flex-direction: column;
 }
 
-.actor-form-title-spacing {
-  height: 41px;
-}
-
 .movie-form {
   margin-right: 5rem;
   display: inline-flex;

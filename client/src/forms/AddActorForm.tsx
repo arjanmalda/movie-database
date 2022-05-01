@@ -1,6 +1,6 @@
-import { Button, FormControl, TextField } from "@mui/material";
-
-const ActorForm = ({
+import { Button, FormControl, IconButton, TextField } from "@mui/material";
+import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
+const AddActorForm = ({
   moviesRefetch,
   actorsRefetch,
   setActorName,
@@ -10,12 +10,22 @@ const ActorForm = ({
   setNationality,
   setActorImage,
   addActor,
+  actorChangeForm,
+  setActorChangeForm,
 }: any) => {
   return (
     <div className="actor-form">
       <FormControl>
         Add a new actor to the list
-        <div className="actor-form-title-spacing"></div>
+        <IconButton
+          onClick={() => {
+            setActorChangeForm(false);
+            console.log(actorChangeForm);
+          }}
+          className="movie-delete-icon"
+        >
+          <ArrowForwardRoundedIcon />
+        </IconButton>
         <TextField
           label="Actor name"
           variant="standard"
@@ -76,4 +86,4 @@ const ActorForm = ({
   );
 };
 
-export default ActorForm;
+export default AddActorForm;
